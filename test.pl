@@ -20,17 +20,16 @@ sub make_cyuzuri {
     my $output = 'output.png';
 
     # IPA Pゴシックフォントをオブジェクト化
-    my $black = Imager::Color->new("#000000");
-    my $font = Imager::Font->new( file => 'ipagp.ttf' ,color => $black, size=> 64);
+    my $white = Imager::Color->new("#ffffff");
+    my $font = Imager::Font->new( file => 'ipagp.ttf' ,color => $white, size=> 64);
 
-    my $named_img = Imager->new(xsize => 1280, ysize => 960);
-    $named_img->box(filled => 1, color => 'white');
+    my $named_img = Imager->new(file => "nakazuri.png");
 
     # create textbox instance
     my $tb = Imager::DTP::Textbox::Vertical->new(
-        text=> decode("utf-8", $config->{left}->{title}),font=>$font, wrapWidth=>128, wrapHeight=>800);
+        text=> decode("utf-8", $config->{left}->{title}),font=>$font, wrapWidth=>128, wrapHeight=>768);
             
-    $tb->draw(target=>$named_img,x=>70,y=>20);
+    $tb->draw(target=>$named_img,x=>128,y=>10);
 
     $tb = Imager::DTP::Textbox::Vertical->new(
         text=> decode("utf-8", $config->{right}->{title}),font=>$font, wrapWidth=>128, wrapHeight=>800);
