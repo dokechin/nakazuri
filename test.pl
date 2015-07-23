@@ -21,33 +21,52 @@ sub make_cyuzuri {
 
     # IPA Pゴシックフォントをオブジェクト化
     my $white = Imager::Color->new("#ffffff");
-    my $font = Imager::Font->new( file => 'ipagp.ttf' ,color => $white, size=> 64);
+    my $black = Imager::Color->new("#000000");
+    my $font = Imager::Font->new( file => 'ipagp.ttf' ,color => $white, size=> 48);
+    my $font_s_b = Imager::Font->new( file => 'ipagp.ttf' ,color => $black, size=> 32);
+    my $font_l = Imager::Font->new( file => 'ipagp.ttf' ,color => $white, size=> 64);
 
     my $named_img = Imager->new(file => "nakazuri.png");
 
     # create textbox instance
     my $tb = Imager::DTP::Textbox::Vertical->new(
-        text=> decode("utf-8", $config->{left}->{title}),font=>$font, wrapWidth=>128, wrapHeight=>768);
+        text=> decode("utf-8", $config->{left}->{title}),font=>$font_l, wrapWidth=>256, wrapHeight=>640);
             
-    $tb->draw(target=>$named_img,x=>128,y=>10);
+    $tb->draw(target=>$named_img,x=>200,y=>10);
 
     $tb = Imager::DTP::Textbox::Vertical->new(
-        text=> decode("utf-8", $config->{right}->{title}),font=>$font, wrapWidth=>128, wrapHeight=>800);
+        text=> decode("utf-8", $config->{right}->{title}),font=>$font, wrapWidth=>256, wrapHeight=>640);
             
-    $tb->draw(target=>$named_img,x=>1168,y=>20);
+    $tb->draw(target=>$named_img,x=>900,y=>10);
+
+    my $index = 0;
+    for my $middle(@{$config->{middles}}){
+
+         $tb = Imager::DTP::Textbox::Vertical->new(
+             text=> decode("utf-8", $middle->{title}),font=>$font_s_b, wrapWidth=>64, wrapHeight=>640);
+                 
+         $tb->draw(target=>$named_img,x=>640 - ($index * 64) ,y=>10);
+
+         my $file = md5_hex($middle->{icon}) . ".png";
+         my $img = Imager->new(file=> $file);
+         $named_img->paste(left=>576- ($index * 64), top=>480, src=>$img);
+
+         $index++;
+
+    }
 
     $tb = Imager::DTP::Textbox::Horizontal->new(
-        text=> decode("utf-8", $config->{title}),font=>$font, wrapWidth=>500, wrapHeight=>1280);
+        text=> decode("utf-8", $config->{title}),font=>$font_l, wrapWidth=>500, wrapHeight=>64);
             
-    $tb->draw(target=>$named_img,x=>312,y=>800);
+    $tb->draw(target=>$named_img,x=>256,y=>640);
 
     my $file = md5_hex($config->{left}->{icon}) . ".png";
     my $img = Imager->new(file=> $file);
-    $named_img->paste(left=>13, top=>800, src=>$img);
+    $named_img->paste(left=>64, top=>656, src=>$img);
 
     $file = md5_hex($config->{right}->{icon}) . ".png";
     $img = Imager->new(file=> $file);
-    $named_img->paste(left=>1088, top=>800, src=>$img);
+    $named_img->paste(left=>832, top=>656, src=>$img);
 
     $named_img->write(file=> $output);
 
@@ -70,11 +89,11 @@ sub get_icon_image{
     my $img = Imager->new();
     $img->read(data=> $res->content);
 
-    my $xpixcels = 96;
-    my $ypixcels = 96;
+    my $xpixcels = 64;
+    my $ypixcels = 64;
     if ($size == 2){
-        my $xpixcels = 136;
-        my $ypixcels = 136;
+        $xpixcels = 136;
+        $ypixcels = 136;
     }
 
     $img = $img->scale(xpixels=> $xpixcels, ypixels=> $ypixcels);
